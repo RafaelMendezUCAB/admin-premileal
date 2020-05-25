@@ -138,6 +138,7 @@ import userService  from '../../services/user/userService';
 import User from '../../types/user/User';
 @Component
 export default class Navbar extends Vue {
+  
   email = "";
   drawer = false;
   allusers: any = null;
