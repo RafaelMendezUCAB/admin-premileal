@@ -1,6 +1,6 @@
 import Vue from "vue";
 
-import userService from "../../services/userService";
+import userService from "../../services/user/userService";
 
 export default {
   namespaced: true,
