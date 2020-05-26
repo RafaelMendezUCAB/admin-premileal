@@ -17,4 +17,8 @@ export default {
     }
   },  
 
+  updateSettings(settings: any){
+    return api.settings.updateSettings(settings);
+  }
+
 };

@@ -250,8 +250,8 @@ export default class Home extends Vue{
     loading = false;
 
     error = false;
-    errorTittle = 'asasdasdasd';
-    errorDescription = 'aasdadadad';  
+    errorTittle = '';
+    errorDescription = '';  
     
     configurationsSaved = false;
     proccessingRequest = false;
@@ -262,6 +262,8 @@ export default class Home extends Vue{
     goldIncomeAux = 0;
 
     settings: any = {};
+
+    serverResponse: any = null;
 
     rules = {
         required: (value: any) => !!value || 'Required.',
@@ -322,9 +324,32 @@ export default class Home extends Vue{
         }  
     }
 
-    saveConfigurations(){
+    updateOriginalValues(){
+        this.settings.serviceCommision = this.serviceCommissionAux;
+        this.settings.gatewayCommision = this.gatewayCommissionAux;
+        this.settings.dolarValue = this.dolarValueAux;
+        this.settings.goldIncome = this.goldIncomeAux;
+    }
+
+    async saveConfigurations(){
         if(this.valid){
             this.proccessingRequest = true;
+            this.serverResponse = await settingsService.updateSettings({
+                serviceCommission: this.serviceCommissionAux,
+                gatewayCommission: this.gatewayCommissionAux,
+                dolarValue: this.dolarValueAux,
+                goldIncome: this.goldIncomeAux
+            });
+            this.proccessingRequest = false;
+            if(this.serverResponse.data === "Settings successfully updated."){
+                this.configurationsSaved = true;
+                this.updateOriginalValues();
+            }
+            else{
+                this.errorTittle = "Error. Transaction rejected."
+                this.errorDescription = "Something happen and your request was rejected. Check your internet connection and try again";
+                this.error = true;
+            }
         }
         else {
             console.log("hs")
