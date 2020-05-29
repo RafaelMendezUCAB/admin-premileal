@@ -10,6 +10,9 @@ export default {
     /* ---------------------- POST METHODS -------------------------- */
 
     /* ---------------------- PUT METHODS -------------------------- */
+    updateSettings(settings: any){
+        return API_URL.put(process.env.VUE_APP_SETTINGS_ROUTE+"/update", settings);
+    }
   
     /* ---------------------- DELETE METHODS -------------------------- */
 }

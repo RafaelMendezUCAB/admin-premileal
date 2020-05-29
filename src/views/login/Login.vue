@@ -45,24 +45,24 @@
                     :rules="[rules.required]"
                     />
                 </v-form>
-                  <div class="text-right">
+                  <!--<div class="text-right">
                       <router-link 
                         style="text-decoration: none;" 
                         to=""
                       >
                           Forgot Password?
                       </router-link>
-                  </div>                     
+                  </div>    -->                 
                   <v-card-actions>
                     <v-btn depressed 
                            width=100% 
                            color="#0095ff" 
-                           class="white--text py-3 pb-7" 
+                           class="white--text py-3 " 
                            @click="login"               
                            >Log In</v-btn>
                   </v-card-actions>
     
-                  <div class="mx-auto text-center" >OR</div>
+                  <!--<div class="mx-auto text-center" >OR</div>
     
                   <span></span>
     
@@ -80,17 +80,17 @@
                     <div class="pr-4 ml-n3 pl-4"> <v-icon large left> mdi-facebook </v-icon></div>
                     <div class="ml-n1"> Log In with FACEBOOK</div>  
                     </v-btn>
-                  </v-card-actions>
+                  </v-card-actions>-->
                 
               </v-card-text>
             </v-card>
-           <div class=" text-center pt-4">
+           <!--<div class=" text-center pt-4">
              Don't have an account?
                <router-link style="text-decoration: none;" 
                             to="/Signup">
                   Sign Up
                </router-link>
-           </div>
+           </div>-->
 
             <v-overlay                                  
               :value="loadingUserData"
@@ -201,17 +201,23 @@ import Footer from '@/components/footer/Footer.vue';
     async login(){
       if(this.valid || this.userData.type !== 'No Federado'){  
         this.loadingUserData = true;
-        this.serverResponse = await userService.login(this.userData);      
-        this.loadingUserData = false;
-        if(this.serverResponse.data === "Users doesn't exists."){
-          this.errorTittle = 'Error!';
-          this.errorDescription = 'Email or password incorrect. Please, try again.';
-          this.error = true;
-        }
-        else {
-          this.$store.dispatch('user/setUserData', this.serverResponse.data[0]);
-          this.$store.dispatch('user/setSessionStatus', true);
-          this.$router.push({ name: 'home' });
+        try {
+          this.serverResponse = await userService.login(this.userData);      
+          this.loadingUserData = false;
+          if(this.serverResponse.data === "Users doesn't exists."){
+            this.errorTittle = 'Error!';
+            this.errorDescription = 'Email or password incorrect. Please, try again.';
+            this.error = true;
+          }
+          else {
+            this.$store.dispatch('user/setUserData', this.serverResponse.data[0]);
+            this.$store.dispatch('user/setSessionStatus', true);
+            this.$router.push({ name: 'home' }).catch((error) => {
+              console.log(error);
+            });
+          }
+        } catch (error) {
+          console.log("An error ocurred while trying to login user: ", error);
         }
       }      
     }    
@@ -225,20 +231,24 @@ import Footer from '@/components/footer/Footer.vue';
     }
 
     loginGoogle(){
-      fa.signInWithPopup(providerGoogle).then(result =>{
+      try {
+        fa.signInWithPopup(providerGoogle).then(result =>{
         this.loadingUserData = true;
         const token = result.credential
         const user = result.user        
         this.assignGoogleCredentials(user);
         this.login();
-      }).catch(error =>{
+        }).catch(error =>{
+          console.log(error);
+          if(error.code !== "auth/cancelled-popup-request" && error.code !== "auth/popup-closed-by-user"){
+            this.errorTittle = 'Network Error!';
+            this.errorDescription = 'There was a network error. Check your network connection and try again.';
+            this.error = true;
+          }        
+        })
+      } catch (error) {
         console.log(error);
-        if(error.code !== "auth/cancelled-popup-request" && error.code !== "auth/popup-closed-by-user"){
-          this.errorTittle = 'Network Error!';
-          this.errorDescription = 'There was a network error. Check your network connection and try again.';
-          this.error = true;
-        }        
-      })
+      }
     }
 
     assignFacebookCredentials(user: any) {
@@ -250,20 +260,24 @@ import Footer from '@/components/footer/Footer.vue';
     }
 
     loginFacebook(){
-      fa.signInWithPopup(providerFacebook).then(result => {
+      try {
+        fa.signInWithPopup(providerFacebook).then(result => {
         this.loadingUserData = true;
         const token = result.credential
         const user = result.user
         this.assignFacebookCredentials(user);
         this.login();
-      }).catch(error =>{
+        }).catch(error =>{
+          console.log(error);
+          if(error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request"){
+            this.errorTittle = 'Network Error!';
+            this.errorDescription = 'There was a network error. Check your network connection and try again.';
+            this.error = true;
+          }   
+        })
+      } catch (error) {
         console.log(error);
-        if(error.code !== "auth/popup-closed-by-user" && error.code !== "auth/cancelled-popup-request"){
-          this.errorTittle = 'Network Error!';
-          this.errorDescription = 'There was a network error. Check your network connection and try again.';
-          this.error = true;
-        }   
-      })
+      }
     }
 
   }

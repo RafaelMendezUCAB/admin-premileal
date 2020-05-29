@@ -250,8 +250,8 @@ export default class Home extends Vue{
     loading = false;
 
     error = false;
-    errorTittle = 'asasdasdasd';
-    errorDescription = 'aasdadadad';  
+    errorTittle = '';
+    errorDescription = '';  
     
     configurationsSaved = false;
     proccessingRequest = false;
@@ -263,6 +263,8 @@ export default class Home extends Vue{
 
     settings: any = {};
 
+    serverResponse: any = null;
+
     rules = {
         required: (value: any) => !!value || 'Required.',
         validNumber: (value: string) => !!value && this.numberIsValid(value) || 'Invalid amount',        
@@ -273,9 +275,12 @@ export default class Home extends Vue{
     }
 
     async getSettings(){
+      try {
         this.settings = await settingsService.getSettings();
-        console.log("Settings: ", this.settings);
         this.setOriginalValues();
+      } catch (error) {
+        console.log("An error ocurred while trying to retrieve system settings.");
+      }        
     }
 
     setOriginalValues(){
@@ -322,12 +327,39 @@ export default class Home extends Vue{
         }  
     }
 
-    saveConfigurations(){
+    updateOriginalValues(){
+        this.settings.serviceCommision = this.serviceCommissionAux;
+        this.settings.gatewayCommision = this.gatewayCommissionAux;
+        this.settings.dolarValue = this.dolarValueAux;
+        this.settings.goldIncome = this.goldIncomeAux;
+    }
+
+    async saveConfigurations(){
         if(this.valid){
             this.proccessingRequest = true;
+            try {
+              this.serverResponse = await settingsService.updateSettings({
+                serviceCommission: this.serviceCommissionAux,
+                gatewayCommission: this.gatewayCommissionAux,
+                dolarValue: this.dolarValueAux,
+                goldIncome: this.goldIncomeAux
+              });
+              this.proccessingRequest = false;
+              if(this.serverResponse.data === "Settings successfully updated."){
+                  this.configurationsSaved = true;
+                  this.updateOriginalValues();
+              }
+              else{
+                  this.errorTittle = "Error. Transaction rejected."
+                  this.errorDescription = "Something happen and your request was rejected. Check your internet connection and try again";
+                  this.error = true;
+              }
+            } catch (error) {
+              console.log("An error ocurred while trying to update system configurations.", error);
+            }
         }
         else {
-            console.log("hs")
+            console.log("Invalid Information.")
         }
     }
 
