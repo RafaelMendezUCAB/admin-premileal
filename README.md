@@ -36,11 +36,11 @@ Previo a la ejecución del proyecto, se requiere que la Base de Datos esté disp
 
 - Crear una Base de Datos con el nombre **Premileal** 
 
-![Click Derecho -> Create Database](/ruta/a/la/imagen.jpg)
+![Click Derecho, Create DataBase](https://github.com/RafaelMendezUCAB/admin-premileal/blob/FASE1-041/src/assets/readme/createDataBase1.jpg)
 
 Y, a continuación, debe hacer click en el botón *Query Tool* para poder ejecutar los queries.
 
-![Query Tool](/ruta/a/la/imagen.jpg)
+![Query Tool](https://github.com/RafaelMendezUCAB/admin-premileal/blob/FASE1-041/src/assets/readme/createDataBase3.jpg)
 
 Estos se encuentran en el repositorio del proyecto, en la siguiente dirección:
 
