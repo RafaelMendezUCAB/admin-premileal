@@ -28,8 +28,8 @@
             <v-btn class="black--text mr-2 font-weight-black buyPoints" flat color="amber" @click="gotoBuyPoints">Buy Points!</v-btn>
                <!-- IF USER ARE NOT ALREADY LOG IN -->
           </v-card>
-          <v-card v-if="!userLoggedIn">
-            <v-btn class="blue--text" color="white" @click="login" >Log In</v-btn>
+          <v-card>
+            <v-btn class="blue--text" color="white" @click="logout" >Log out</v-btn>
           </v-card>
         </v-toolbar>
         
@@ -155,7 +155,9 @@ export default class Navbar extends Vue {
     }).catch(function(error: any) {
       console.log('Signout failed')
     });
-    this.$router.push({ name: 'login'});
+    this.$router.push({ name: 'login' }).catch((error) => {
+      console.log(error);
+    });
   }
 
   mounted(){

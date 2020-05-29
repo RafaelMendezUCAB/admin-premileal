@@ -8,7 +8,7 @@ export default {
     },
   
     login(email: string, password: string){
-      return API_URL.get(process.env.VUE_APP_USER_ROUTE+"/login/"+email+"/"+password);
+      return API_URL.get(process.env.VUE_APP_USER_ROUTE+"/login/admin/"+email+"/"+password);
     },
   
     socialLogin(email: string, type: string){
